@@ -1,0 +1,131 @@
+From fb33ba335325020d4f42985491f2f98eddffc165 Mon Sep 17 00:00:00 2001
+From: Ronnie Sahlberg <lsahlber@redhat.com>
+Origin: Upstream, https://git.samba.org/?p=cifs-utils.git;a=commit;h=fb33ba335325020d4f42985491f2f98eddffc165
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1886551
+Date: Fri, 15 Mar 2019 16:22:15 +1000
+Subject: [PATCH] smbinfo: add fsctl-getobjid support
+
+This will print the ObjectID buffer for the object.
+This is an example on how to fetch FSCTL data for an object using
+the passthrough API.
+
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+---
+ smbinfo.c   | 73 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ smbinfo.rst |  2 ++
+ 2 files changed, 75 insertions(+)
+
+diff --git a/smbinfo.c b/smbinfo.c
+index d7e7bf3..268114b 100644
+--- a/smbinfo.c
++++ b/smbinfo.c
+@@ -39,6 +39,11 @@
+ #include <inttypes.h>
+ 
+ #define CIFS_IOCTL_MAGIC 0xCF
++
++/* query_info flags */
++#define PASSTHRU_QUERY_INFO     0x00000000
++#define PASSTHRU_FSCTL          0x00000001
++
+ struct smb_query_info {
+ 	uint32_t   info_type;
+ 	uint32_t   file_info_class;
+@@ -167,6 +172,72 @@ print_bits(uint32_t mask, struct bit_string *bs)
+ 		printf(" ");
+ }
+ 
++static void
++print_guid(uint8_t *sd)
++{
++	uint32_t u32;
++	uint16_t u16;
++	int i;
++
++	memcpy(&u32, &sd[0], 4);
++	printf("%08x-", le32toh(u32));
++
++	memcpy(&u16, &sd[4], 2);
++	printf("%04x-", le16toh(u16));
++
++	memcpy(&u16, &sd[6], 2);
++	printf("%04x-", le16toh(u16));
++
++	printf("%02x%02x-", sd[8], sd[9]);
++	for (i = 0; i < 6; i++)
++		printf("%02x", sd[10 + i]);
++}
++
++static void
++print_objidbuf(uint8_t *sd)
++{
++	printf("Object-ID: ");
++	print_guid(&sd[0]);
++	printf("\n");
++
++	printf("Birth-Volume-ID: ");
++	print_guid(&sd[16]);
++	printf("\n");
++
++	printf("Birth-Object-ID: ");
++	print_guid(&sd[32]);
++	printf("\n");
++
++	printf("Domain-ID: ");
++	print_guid(&sd[48]);
++	printf("\n");
++}
++
++static void
++fsctlgetobjid(int f)
++{
++	struct smb_query_info *qi;
++	struct stat st;
++
++	fstat(f, &st);
++
++	qi = malloc(sizeof(struct smb_query_info) + 64);
++	memset(qi, 0, sizeof(qi) + 64);
++	qi->info_type = 0x9009c;
++	qi->file_info_class = 0;
++	qi->additional_information = 0;
++	qi->input_buffer_length = 64;
++	qi->flags = PASSTHRU_FSCTL;
++
++	if (ioctl(f, CIFS_QUERY_INFO, qi) < 0) {
++		fprintf(stderr, "ioctl failed with %s\n", strerror(errno));
++		exit(1);
++	}
++	print_objidbuf((uint8_t *)(&qi[1]));
++
++	free(qi);
++}
++
+ static void
+ print_fileaccessinfo(uint8_t *sd, int type)
+ {
+@@ -943,6 +1014,8 @@ int main(int argc, char *argv[])
+ 		secdesc(f);
+ 	else if (!strcmp(argv[optind], "quota"))
+ 		quota(f);
++	else if (!strcmp(argv[1], "fsctl-getobjid"))
++		fsctlgetobjid(f);
+ 	else {
+ 		fprintf(stderr, "Unknown command %s\n", argv[optind]);
+ 		exit(1);
+diff --git a/smbinfo.rst b/smbinfo.rst
+index 9bfd313..fd7f0ff 100644
+--- a/smbinfo.rst
++++ b/smbinfo.rst
+@@ -62,6 +62,8 @@ COMMAND
+ 
+ `filestandardinfo`: Prints the FileStandardInformation class
+ 
++`fsctl-getobjid`: Prints the ObjectID
++
+ `quota`: Print the quota for the volume in the form
+ - SID Length
+ - Change Time
+-- 
+2.17.1
+

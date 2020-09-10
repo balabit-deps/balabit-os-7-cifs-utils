@@ -1,0 +1,62 @@
+From 98907475550ecd459cb6eae9787c53b7e032448d Mon Sep 17 00:00:00 2001
+From: Pavel Shilovsky <pshilov@microsoft.com>
+Origin: Upstream, https://git.samba.org/?p=cifs-utils.git;a=commit;h=98907475550ecd459cb6eae9787c53b7e032448d
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1886551
+Date: Tue, 2 Apr 2019 11:40:40 -0700
+Subject: [PATCH] smbinfo: make argument order consistent
+
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Paulo Alcantara <palcantara@suse.de>
+---
+ smbinfo.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/smbinfo.c b/smbinfo.c
+index adfd85e..f9de7fd 100644
+--- a/smbinfo.c
++++ b/smbinfo.c
+@@ -85,14 +85,14 @@ usage(char *name)
+ 		"      Prints FilePositionInfo for a cifs file.\n"
+ 		"  filestandardinfo:\n"
+ 		"      Prints FileStandardInfo for a cifs file.\n"
+-		"  secdesc:\n"
+-		"      Prints the security descriptor for a cifs file.\n"
+-		"  quota:\n"
+-		"      Prints the quota for a cifs file.\n"
++		"  fsctl-getobjid:\n"
++		"      Prints the objectid of the file and GUID of the underlying volume.\n"
+ 		"  list-snapshots:\n"
+ 		"      List the previous versions of the volume that backs this file.\n"
+-		"  fsctl-getobjid:\n"
+-		"      Prints the objectid of the file and GUID of the underlying volume.\n",
++		"  quota:\n"
++		"      Prints the quota for a cifs file.\n"
++		"  secdesc:\n"
++		"      Prints the security descriptor for a cifs file.\n",
+ 		name);
+ 	exit(1);
+ }
+@@ -1116,14 +1116,14 @@ int main(int argc, char *argv[])
+ 		filepositioninfo(f);
+ 	else if (!strcmp(argv[optind], "filestandardinfo"))
+ 		filestandardinfo(f);
+-	else if (!strcmp(argv[optind], "secdesc"))
+-		secdesc(f);
+-	else if (!strcmp(argv[optind], "quota"))
+-		quota(f);
++	else if (!strcmp(argv[optind], "fsctl-getobjid"))
++		fsctlgetobjid(f);
+ 	else if (!strcmp(argv[optind], "list-snapshots"))
+ 		list_snapshots(f);
+-	else if (!strcmp(argv[1], "fsctl-getobjid"))
+-		fsctlgetobjid(f);
++	else if (!strcmp(argv[optind], "quota"))
++		quota(f);
++	else if (!strcmp(argv[optind], "secdesc"))
++		secdesc(f);
+ 	else {
+ 		fprintf(stderr, "Unknown command %s\n", argv[optind]);
+ 		exit(1);
+-- 
+2.17.1
+

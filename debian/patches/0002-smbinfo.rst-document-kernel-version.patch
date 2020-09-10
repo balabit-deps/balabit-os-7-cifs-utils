@@ -1,0 +1,28 @@
+From f0c95ea8d2835b16ac17895fa7bcbbfdc95ed708 Mon Sep 17 00:00:00 2001
+From: Aurelien Aptel <aaptel@suse.com>
+Origin: Upstream, https://git.samba.org/?p=cifs-utils.git;a=commit;h=f0c95ea8d2835b16ac17895fa7bcbbfdc95ed708
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1886551
+Date: Thu, 24 Jan 2019 18:13:56 +0100
+Subject: [PATCH] smbinfo.rst: document kernel version
+
+Signed-off-by: Aurelien Aptel <aaptel@suse.com>
+---
+ smbinfo.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/smbinfo.rst b/smbinfo.rst
+index e37c709..a10edb1 100644
+--- a/smbinfo.rst
++++ b/smbinfo.rst
+@@ -61,7 +61,7 @@ NOTES
+ *****
+ 
+ Kernel support for smbinfo utilities requires the CIFS_QUERY_INFO
+-IOCTL which was initially introduced in the XXX kernel and is only
++IOCTL which was initially introduced in the 4.20 kernel and is only
+ implemented for mount points using SMB2 or above (see mount.cifs(8)
+ `vers` option).
+ 
+-- 
+2.17.1
+

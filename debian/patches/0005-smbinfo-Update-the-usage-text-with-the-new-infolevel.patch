@@ -1,0 +1,45 @@
+From 858ac4df38169d0b7835113c54a0f85d309303ce Mon Sep 17 00:00:00 2001
+From: Ronnie Sahlberg <lsahlber@redhat.com>
+Origin: Upstream, https://git.samba.org/?p=cifs-utils.git;a=commit;h=858ac4df38169d0b7835113c54a0f85d309303ce
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1886551
+Date: Wed, 13 Feb 2019 15:47:36 +1000
+Subject: [PATCH] smbinfo: Update the usage text with the new infolevels
+
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+---
+ smbinfo.c | 18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
+
+diff --git a/smbinfo.c b/smbinfo.c
+index 76e722e..5815f06 100644
+--- a/smbinfo.c
++++ b/smbinfo.c
+@@ -57,8 +57,24 @@ usage(char *name)
+ {
+         fprintf(stderr, "Usage: %s <command> <file>\n"
+                 "Commands are\n"
++                "  fileaccessinfo:\n"
++                "      Prints FileAccessInfo for a cifs file.\n"
++                "  filealigninfo:\n"
++                "      Prints FileAlignInfo for a cifs file.\n"
+                 "  fileallinfo:\n"
+-                "      Prints common metadata associated with a file.\n"
++                "      Prints FileAllInfo for a cifs file.\n"
++                "  filebasicinfo:\n"
++                "      Prints FileBasicInfo for a cifs file.\n"
++                "  fileeainfo:\n"
++                "      Prints FileEAInfo for a cifs file.\n"
++                "  fileinternalinfo:\n"
++                "      Prints FileInternalInfo for a cifs file.\n"
++                "  filemodeinfo:\n"
++                "      Prints FileModeInfo for a cifs file.\n"
++                "  filepositioninfo:\n"
++                "      Prints FilePositionInfo for a cifs file.\n"
++                "  filestandardinfo:\n"
++                "      Prints FileStandardInfo for a cifs file.\n"
+                 "  secdesc:\n"
+                 "      Prints the security descriptor for a cifs file.\n"
+                 "  quota:\n"
+-- 
+2.17.1
+

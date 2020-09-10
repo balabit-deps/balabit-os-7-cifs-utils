@@ -1,0 +1,103 @@
+From 70902177e944c79aeb5c88e2092ef329724138fc Mon Sep 17 00:00:00 2001
+From: Ronnie Sahlberg <lsahlber@redhat.com>
+Origin: Upstream, https://git.samba.org/?p=cifs-utils.git;a=commit;h=70902177e944c79aeb5c88e2092ef329724138fc
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1886551
+Date: Wed, 13 Feb 2019 15:47:37 +1000
+Subject: [PATCH] smbinfo: add FileFsFullSizeInformation
+
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+---
+ smbinfo.c   | 49 +++++++++++++++++++++++++++++++++++++++++++++++++
+ smbinfo.rst |  2 ++
+ 2 files changed, 51 insertions(+)
+
+diff --git a/smbinfo.c b/smbinfo.c
+index 5815f06..02910c6 100644
+--- a/smbinfo.c
++++ b/smbinfo.c
+@@ -67,6 +67,8 @@ usage(char *name)
+                 "      Prints FileBasicInfo for a cifs file.\n"
+                 "  fileeainfo:\n"
+                 "      Prints FileEAInfo for a cifs file.\n"
++                "  filefsfullsizeinfo:\n"
++                "      Prints FileFsFullSizeInfo for a cifs share.\n"
+                 "  fileinternalinfo:\n"
+                 "      Prints FileInternalInfo for a cifs file.\n"
+                 "  filemodeinfo:\n"
+@@ -492,6 +494,51 @@ fileeainfo(int f)
+         free(qi);
+ }
+ 
++static void
++print_filefullsizeinfo(uint8_t *sd)
++{
++        uint32_t u32;
++        uint64_t u64;
++
++        memcpy(&u64, &sd[0], 8);
++        printf("Total Allocation Units: %" PRIu64 "\n", le64toh(u64));
++
++        memcpy(&u64, &sd[8], 8);
++        printf("Caller Available Allocation Units: %" PRIu64 "\n",
++	       le64toh(u64));
++
++        memcpy(&u64, &sd[16], 8);
++        printf("Actual Available Allocation Units: %" PRIu64 "\n",
++	       le64toh(u64));
++
++        memcpy(&u32, &sd[24], 4);
++        printf("Sectors Per Allocation Unit: %" PRIu32 "\n", le32toh(u32));
++
++        memcpy(&u32, &sd[28], 4);
++        printf("Bytes Per Sector: %" PRIu32 "\n", le32toh(u32));
++}
++
++static void
++filefsfullsizeinfo(int f)
++{
++        struct smb_query_info *qi;
++
++        qi = malloc(sizeof(struct smb_query_info) + 32);
++	memset(qi, 0, sizeof(qi) + 32);
++        qi->info_type = 0x02;
++        qi->file_info_class = 7;
++        qi->additional_information = 0;
++        qi->input_buffer_length = 32;
++
++        if (ioctl(f, CIFS_QUERY_INFO, qi) < 0) {
++                fprintf(stderr, "ioctl failed with %s\n", strerror(errno));
++                exit(1);
++        }
++
++        print_filefullsizeinfo((uint8_t *)(&qi[1]));
++	free(qi);
++}
++
+ static void
+ fileallinfo(int f)
+ {
+@@ -759,6 +806,8 @@ int main(int argc, char *argv[])
+                 filebasicinfo(f);
+         else if (!strcmp(argv[1], "fileeainfo"))
+                 fileeainfo(f);
++        else if (!strcmp(argv[1], "filefsfullsizeinfo"))
++                filefsfullsizeinfo(f);
+         else if (!strcmp(argv[1], "fileinternalinfo"))
+                 fileinternalinfo(f);
+         else if (!strcmp(argv[1], "filemodeinfo"))
+diff --git a/smbinfo.rst b/smbinfo.rst
+index 85de4cb..5222a71 100644
+--- a/smbinfo.rst
++++ b/smbinfo.rst
+@@ -49,6 +49,8 @@ COMMAND
+ 
+ `fileeainfo`: Prints the FileEaInformation class
+ 
++`filefsfullsizeinfo`: Prints the FileFsFullSizeInformation class
++
+ `fileinternalinfo`: Prints the FileInternalInformation class
+ 
+ `filemodeinfo`: Prints the FileModeInformation class
+-- 
+2.17.1
+

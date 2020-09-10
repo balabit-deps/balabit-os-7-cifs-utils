@@ -1,0 +1,35 @@
+From aee01e0e61837fc8eb273039c5d1e11634b2e56a Mon Sep 17 00:00:00 2001
+From: Pavel Shilovsky <pshilov@microsoft.com>
+Origin: Upstream, https://git.samba.org/?p=cifs-utils.git;a=commit;h=aee01e0e61837fc8eb273039c5d1e11634b2e56a
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1886551
+Date: Fri, 5 Apr 2019 10:01:48 -0700
+Subject: [PATCH] smbinfo: use constant for input buffer length
+
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+---
+ smbinfo.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/smbinfo.c b/smbinfo.c
+index f9de7fd..4bc503a 100644
+--- a/smbinfo.c
++++ b/smbinfo.c
+@@ -941,12 +941,12 @@ quota(int f)
+ 	char *buf;
+ 	int i;
+ 
+-	qi = malloc(sizeof(struct smb_query_info) + 16384);
+-	memset(qi, 0, sizeof(struct smb_query_info) + 16384);
++	qi = malloc(sizeof(struct smb_query_info) + INPUT_BUFFER_LENGTH);
++	memset(qi, 0, sizeof(struct smb_query_info) + INPUT_BUFFER_LENGTH);
+ 	qi->info_type = 0x04;
+ 	qi->file_info_class = 0;
+ 	qi->additional_information = 0; /* Owner, Group, Dacl */
+-	qi->input_buffer_length = 16384;
++	qi->input_buffer_length = INPUT_BUFFER_LENGTH;
+ 
+ 	buf = (char *)&qi[1];
+ 	buf[0] = 0; /* return single */
+-- 
+2.17.1
+

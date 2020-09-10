@@ -1,0 +1,36 @@
+From db9d117fd6e2660768a35e72a374540ffc68d36d Mon Sep 17 00:00:00 2001
+From: Steve French <stfrench@microsoft.com>
+Origin: Upstream, https://git.samba.org/?p=cifs-utils.git;a=commit;h=db9d117fd6e2660768a35e72a374540ffc68d36d
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1886551
+Date: Tue, 29 Jan 2019 07:03:01 -0600
+Subject: [PATCH] smbinfo: update help text
+
+Add description for fileallinfo query option.
+
+Note that there are eight other recently added query options, but they
+are mostly a subset a "fileallinfo" so could be of little value
+(and may even be very confusing if we documented all nine in the
+help text in smbinfo, instead of just this one).  The man page
+has a full description of them.
+
+Signed-off-by: Steve French <stfrench@microsoft.com>
+---
+ smbinfo.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/smbinfo.c b/smbinfo.c
+index 7184a68..76e722e 100644
+--- a/smbinfo.c
++++ b/smbinfo.c
+@@ -57,6 +57,8 @@ usage(char *name)
+ {
+         fprintf(stderr, "Usage: %s <command> <file>\n"
+                 "Commands are\n"
++                "  fileallinfo:\n"
++                "      Prints common metadata associated with a file.\n"
+                 "  secdesc:\n"
+                 "      Prints the security descriptor for a cifs file.\n"
+                 "  quota:\n"
+-- 
+2.17.1
+

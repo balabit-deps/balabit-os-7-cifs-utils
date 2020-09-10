@@ -1,3 +1,27 @@
+cifs-utils (2:6.8-1ubuntu1.1) bionic; urgency=medium
+
+  * Add smbinfo utility and 'keys' command (LP: #1886551) :
+    - d/p/0001-smbinfo-add-a-utility-to-display-smb-specific-inform.patch
+    - d/p/0002-smbinfo.rst-document-kernel-version.patch
+    - d/p/0003-smbinfo-Add-more-File-Information-classes.patch
+    - d/p/0004-smbinfo-update-help-text.patch
+    - d/p/0005-smbinfo-Update-the-usage-text-with-the-new-infolevel.patch
+    - d/p/0006-smbinfo-add-FileFsFullSizeInformation.patch
+    - d/p/0007-smbinfo-decode-the-ACEs.patch
+    - d/p/0008-smbinfo-fix-code-style.patch
+    - d/p/0009-smbinfo-add-fsctl-getobjid-support.patch
+    - d/p/0010-smbinfo-missing-help-for-fsctl-getobjid.patch
+    - d/p/0011-smbinfo-Add-ability-to-query-snapshots-previous-vers.patch
+    - d/p/0012-smbinfo-make-argument-order-consistent.patch
+    - d/p/0013-smbinfo-use-constant-for-input-buffer-length.patch
+    - d/p/0014-smbinfo-Improve-help-usage-and-add-h-option.patch
+    - d/p/0015-smbinfo-add-GETCOMPRESSION-support.patch
+    - d/p/0016-smbinfo-print-the-security-information-needed-to-dec.patch
+    - d/p/0017-smbinfo-Add-SETCOMPRESSION-support.patch
+    - d/p/0018-smbinfo.rst-document-new-keys-command.patch
+
+ -- Ioanna Alifieraki <ioanna-maria.alifieraki@canonical.com>  Thu, 10 Sep 2020 02:31:09 +0100
+
 cifs-utils (2:6.8-1ubuntu1) bionic; urgency=medium
 
   * d/p/setcifsacl-fix-adding-ACE-when-owner-sid-in-unexpect.patch:
